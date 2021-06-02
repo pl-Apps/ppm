@@ -1,0 +1,26 @@
+{
+  "name": "ppm",
+  "version": "1.0",
+  "description": "ppm is the pl package manager",
+  "main": "src/app.js",
+  "bin": "src/app.js",
+  "repository": "https://github.com/pl-Apps/ppm.git",
+  "author": "Peppo",
+  "license": "MIT",
+  "scripts": {
+    "desktop": "electron desktop/",
+    "start": "node ."
+  },
+  "pkg": {
+    "scripts": "./**/*.js"
+  },
+  "dependencies": {
+    "basic-ftp": "^4.6.6",
+    "colors": "^1.4.0",
+    "fs": "*",
+    "http": "*",
+    "https": "^1.0.0",
+    "os": "^0.1.1",
+    "ppm-pkg": "^1.0.0"
+  }
+}
