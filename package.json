@@ -17,6 +17,7 @@
   "dependencies": {
     "basic-ftp": "^4.6.6",
     "colors": "^1.4.0",
+    "console-read-write": "^0.1.1",
     "fs": "*",
     "http": "*",
     "https": "^1.0.0",

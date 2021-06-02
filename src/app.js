@@ -4,6 +4,7 @@ const exec = require("child_process").exec
 const os = require("os")
 const fs = require("fs")
 const colors = require("colors")
+const input = require("console-read-write").ask
 
 var workingdir = os.homedir + "/.ppm"
 var installdir = os.homedir + "/.ppm/packages"
@@ -24,7 +25,7 @@ async function check()
 
 async function stats()
 {
-    console.log("ppm running on:\n" + os.platform() + " " + os.arch + "\n") 
+    console.log("ppm running on:\n" + os.platform() + " " + os.arch + "\nInstalled on: " + __dirname) 
 }
 
 async function logerror(exception = new String())
@@ -96,6 +97,22 @@ async function remove(packagename = new String())
     }
 }
 
+async function init()
+{
+    if(fs.existsSync(__dirname + "/.ppm"))
+    {
+        logerror("ppm package alredy initialized")
+        process.exit(1)
+    }
+    else
+    {
+        try { fs.mkdirSync(__dirname + "/.ppm", function(err) {}) } catch { logerror("Impossible to initialize ppm package");}
+        const pkgname = await input("Package name:")
+        const pkgdescr = await input("Package description:")
+        const pkgversion = await input("Version:")
+        const pkgauthor = await input("Author:")
+    }
+}
 
 async function update(packagename = new String())
 {
@@ -163,6 +180,10 @@ async function main()
         else if(process.argv[2] == "packages")
         {
             getpackages()
+        }
+        else if(process.argv[2] == "init")
+        {
+            init()
         }
         else
         {
