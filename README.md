@@ -15,4 +15,14 @@ ppm uninstall [package name]
 ## Update packages
 ```sh
 ppm update [package name]
-```# Peppooo
+```
+
+## Search packages
+```sh
+ppm search [package name]
+```
+
+## Get the all installed packages
+```sh
+ppm list
+```

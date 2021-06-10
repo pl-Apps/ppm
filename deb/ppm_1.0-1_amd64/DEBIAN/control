@@ -1,0 +1,5 @@
+Package: ppm
+Version: 1.0
+Architecture: amd64
+Maintainer: Boh
+Description: the pl package manager

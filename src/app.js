@@ -9,6 +9,7 @@ const input = require("console-read-write").ask
 var workingdir = os.homedir + "/.ppm"
 var installdir = os.homedir + "/.ppm/packages"
 
+
 async function check()
 {
     // Create if not exist the "WORKING DIRECTORY"
@@ -35,7 +36,7 @@ async function logerror(exception = new String())
 
 async function help()
 {
-    console.log("ppm [OPTIONS] ...\n\nppm install [package name]\nppm uninstall [package name]\nppm remove [package name]\nppm update [package name]\nppm run [package name]\nppm packages\n")
+    console.log("ppm [OPTIONS] ...\n\nppm install [package name]\nppm uninstall [package name]\nppm remove [package name]\nppm update [package name]\nppm run [package name]\nppm search [package name]\nppm list\n")
 }
 
 
@@ -43,6 +44,24 @@ async function getpackages()
 {
     const files = await fs.readdirSync(installdir);
     files.forEach(pkg => { console.log(pkg.replace(".plpkg", "")) })
+}
+
+async function searchpackage(packagename = new String())
+{
+    await https.get("https://registry-ppm.cf/packages/" + packagename + ".plpkg").on('response', async function (response) {
+        response.on("data", async(chunk) => {
+            if(chunk != "404")
+            {
+                console.log("[*] " + "Package found at ".green + "https://registry-ppm.cf/packages/" + packagename + ".plpkg")
+            }
+        })
+        const files = await fs.readdirSync(installdir);
+        files.forEach(pkg => { 
+            if(pkg == packagename + ".plpkg") {
+                console.log("[*] " + "Package found at ".green + installdir + "/" + packagename + ".plpkg")
+            }
+        })
+    })
 }
 
 async function run(packagename = new String())
@@ -67,7 +86,7 @@ async function install(packagename = new String())
         logerror("Package alredy installed")
         process.exit(1)
     }
-    https.get("https://registry-ppm.cf/packages/" + packagename + ".plpkg").on('response', async function (response) {
+    await https.get("https://registry-ppm.cf/packages/" + packagename + ".plpkg").on('response', async function (response) {
         response.on("data", async(chunk) => {
             if(chunk == "404")
             {
@@ -77,7 +96,7 @@ async function install(packagename = new String())
             else
             {
                 const packagefile = fs.createWriteStream(installdir + "/" + packagename  + ".plpkg")
-                await response.pipe(packagefile)
+                await packagefile.write(chunk)
                 console.log("[*] ".white + "Package installed".green)
             }
         })
@@ -94,23 +113,6 @@ async function remove(packagename = new String())
     {
         logerror("The package is not installed")
         process.exit(1)
-    }
-}
-
-async function init()
-{
-    if(fs.existsSync(__dirname + "/.ppm"))
-    {
-        logerror("ppm package alredy initialized")
-        process.exit(1)
-    }
-    else
-    {
-        try { fs.mkdirSync(__dirname + "/.ppm", function(err) {}) } catch { logerror("Impossible to initialize ppm package");}
-        const pkgname = await input("Package name:")
-        const pkgdescr = await input("Package description:")
-        const pkgversion = await input("Version:")
-        const pkgauthor = await input("Author:")
     }
 }
 
@@ -169,6 +171,15 @@ async function main()
                 run(process.argv[3])
             }
         }
+        else if(process.argv[2] == "search")
+        {
+            if(process.argv.length == 3)
+            {
+                logerror("No package name")
+            } else {
+                searchpackage(process.argv[3])
+            }
+        }
         else if(process.argv[2] == "stats")
         {
             stats()
@@ -177,13 +188,9 @@ async function main()
         {
             help()
         }
-        else if(process.argv[2] == "packages")
+        else if(process.argv[2] == "list")
         {
             getpackages()
-        }
-        else if(process.argv[2] == "init")
-        {
-            init()
         }
         else
         {
