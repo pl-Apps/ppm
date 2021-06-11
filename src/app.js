@@ -9,6 +9,8 @@ const input = require("console-read-write").ask
 var workingdir = os.homedir + "/.ppm"
 var installdir = os.homedir + "/.ppm/packages"
 
+var registryurl = "https://registry-ppm.cf/packages/"
+
 
 async function check()
 {
@@ -36,23 +38,42 @@ async function logerror(exception = new String())
 
 async function help()
 {
-    console.log("ppm [OPTIONS] ...\n\nppm install [package name]\nppm uninstall [package name]\nppm remove [package name]\nppm update [package name]\nppm run [package name]\nppm search [package name]\nppm list\n")
+    console.log("ppm [OPTIONS] ...\n\nppm install [package name]\nppm uninstall [package name]\nppm remove [package name]\nppm update [package name]\nppm run [package name]\nppm search [package name]\nppm local-list\nppm remote-list")
 }
 
+async function getremotepackages()
+{
+    await https.get(registryurl + "packages.pkgs-reg").on('response', async function (response) {
+        response.on("data", async(chunk) => {
+            chunk = String(chunk)
+            if(chunk == "404")
+            {
+                logerror("Impossible to get remote package list")
+                return 1
+            }
+            else
+            {
+                console.log(chunk)
+            }
+        })
+    })
+}
 
 async function getpackages()
 {
     const files = await fs.readdirSync(installdir);
-    files.forEach(pkg => { console.log(pkg.replace(".plpkg", "")) })
+    files.forEach(pkg => { 
+        console.log("[*] " + "Package found at ".green + installdir + "/" + pkg.replace(".plpkg", ""))
+    })
 }
 
 async function searchpackage(packagename = new String())
 {
-    await https.get("https://registry-ppm.cf/packages/" + packagename + ".plpkg").on('response', async function (response) {
+    await https.get(registryurl + packagename + ".plpkg").on('response', async function (response) {
         response.on("data", async(chunk) => {
             if(chunk != "404")
             {
-                console.log("[*] " + "Package found at ".green + "https://registry-ppm.cf/packages/" + packagename + ".plpkg")
+                console.log("[*] " + "Package found at ".green + registryurl + packagename + ".plpkg")
             }
         })
         const files = await fs.readdirSync(installdir);
@@ -86,21 +107,15 @@ async function install(packagename = new String())
         logerror("Package alredy installed")
         process.exit(1)
     }
-    await https.get("https://registry-ppm.cf/packages/" + packagename + ".plpkg").on('response', async function (response) {
-        response.on("data", async(chunk) => {
-            if(chunk == "404")
-            {
-                logerror("Package not found")
-                return 1
-            }
-            else
-            {
-                const packagefile = fs.createWriteStream(installdir + "/" + packagename  + ".plpkg")
-                await packagefile.write(chunk)
-                console.log("[*] ".white + "Package installed".green)
-            }
-        })
+    await https.get(registryurl + packagename + ".plpkg", async (response) => {
+        const packagefile = fs.createWriteStream(installdir + "/" + packagename  + ".plpkg")
+        response.pipe(packagefile)
     })
+}
+
+async function upload()
+{
+    https.get()
 }
 
 async function remove(packagename = new String())
@@ -188,9 +203,13 @@ async function main()
         {
             help()
         }
-        else if(process.argv[2] == "list")
+        else if(process.argv[2] == "local-list")
         {
             getpackages()
+        }
+        else if(process.argv[2] == "remote-list")
+        {
+            getremotepackages()
         }
         else
         {
