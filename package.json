@@ -1,30 +1,29 @@
 {
-  "name": "ppm",
-  "version": "1.0",
-  "description": "ppm is the pl package manager",
-  "main": "src/app.js",
-  "bin": "src/app.js",
-  "repository": "https://github.com/pl-Apps/ppm.git",
-  "author": "Peppo",
-  "license": "MIT",
-  "scripts": {
-    "desktop": "electron desktop/",
-    "start": "node ."
-  },
-  "pkg": {
-    "scripts": "./**/*.js"
-  },
-  "dependencies": {
-    "basic-ftp": "^4.6.6",
-    "colors": "^1.4.0",
-    "console-read-write": "^0.1.1",
-    "decompress": "^4.2.1",
-    "decompress-targz": "^4.1.1",
-    "discord-rpc": "^3.2.0",
-    "fs": "*",
-    "http": "*",
-    "https": "^1.0.0",
-    "os": "^0.1.1",
-    "ppm-pkg": "^1.0.0"
-  }
+    "name": "ppm",
+    "version": "1.0",
+    "description": "ppm is the pl package manager",
+    "main": "src/app.js",
+    "bin": "src/app.js",
+    "repository": "https://github.com/pl-Apps/ppm.git",
+    "author": "Peppo",
+    "license": "MIT",
+    "scripts": {
+        "desktop": "electron desktop/",
+        "start": "node ."
+    },
+    "pkg": {
+        "scripts": "./**/*.js"
+    },
+    "dependencies": {
+        "colors": "^1.4.0",
+        "console-read-write": "^0.1.1",
+        "discord-rpc": "^3.2.0",
+        "fs": "*",
+        "http": "*",
+        "https": "^1.0.0",
+        "is-admin": "^3.0.0",
+        "latest-github-release": "^1.0.4",
+        "nodegit": "^0.27.0",
+        "os": "^0.1.1"
+    }
 }
