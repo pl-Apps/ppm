@@ -1,4 +1,15 @@
+# node modules
+
 node_modules
+
+# debian package dir
+
 deb
+
+# visual studio code settings
+
 .vscode
+
+# ppm binarys
+
 bin
