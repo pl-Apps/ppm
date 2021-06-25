@@ -1,7 +1,7 @@
 # ppm
 <br>
 
-<img src="logo.png" height=100>
+<img src="logo.png" height=100></img>
 <br><br>
 pl Package Manager
 
